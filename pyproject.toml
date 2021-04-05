@@ -1,0 +1,41 @@
+[tool.black]
+line-length = 110
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = '''
+  -v
+  -rs
+  --strict-config
+  --strict-markers
+  --showlocals
+  --black
+  --flake8
+  --isort
+  --mypy
+  --junitxml=junit/test-results.xml
+  --cov=.
+  --cov-branch
+  --cov-report xml:cov.xml
+  --cov-report html:htmlcov
+  --cov-report term
+  --cov-fail-under=80
+'''
+
+[tool.coverage.run]
+branch=true
+omit = [
+  '**/test_*.py',
+  '**/__init__.py',
+  '.venv/**/*.py',
+  'test/',
+]
+
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 110
+import_heading_stdlib='Standard Library'
+import_heading_thirdparty='Third Party Libraries'
+import_heading_firstparty='Our Libraries'
