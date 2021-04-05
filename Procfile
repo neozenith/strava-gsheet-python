@@ -1,1 +1,1 @@
-web: uvicorn api.v1:app
+web: uvicorn api.v1:app --port 80
