@@ -129,3 +129,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Third Party Swagger CodeGen Clients
+strava/docs
+strava/test
+strava/.*
+strava/*.sh
+strava/*.md
+
+# Misc files
+scratch

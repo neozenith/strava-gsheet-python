@@ -20,6 +20,7 @@ addopts = '''
   --cov-report html:htmlcov
   --cov-report term
   --cov-fail-under=80
+  --ignore=strava
 '''
 
 [tool.coverage.run]
@@ -29,6 +30,7 @@ omit = [
   '**/__init__.py',
   '.venv/**/*.py',
   'test/',
+  'strava/',
 ]
 
 
