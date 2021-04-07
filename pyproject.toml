@@ -30,6 +30,7 @@ omit = [
   '**/__init__.py',
   '.venv/**/*.py',
   'test/',
+  'cli/__main__.py',
   'strava/',
 ]
 
