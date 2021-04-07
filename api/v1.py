@@ -4,7 +4,11 @@
 from pprint import pprint as pp
 
 # Third Party Libraries
+from dotenv import load_dotenv
 from fastapi import FastAPI, Request
+
+load_dotenv()
+
 
 app = FastAPI()
 

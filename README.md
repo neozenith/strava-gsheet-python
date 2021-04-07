@@ -6,10 +6,15 @@ Connecting my Strava activities to my Google Sheets workout tracking using Pytho
 
 ## Setup Dev Environment
 
-```
+```bash
+# Using OAPIv3 codegen
+brew install swagger-codegen
+swagger-codegen generate -i https://developers.strava.com/swagger/swagger.json -l python -o strava
+
+# Setup python development
 python3 -m venv .venv
 . .venv/bin/activate
-python -m pip install -r requirements.txt --upgrade
+python -m pip install -r requirements.txt -r requirements-dev.txt --upgrade
 ```
 
 ## Testing
