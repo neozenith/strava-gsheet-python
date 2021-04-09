@@ -10,10 +10,13 @@ from swagger_client.rest import ApiException
 class StravaAPIWrapper:
     """Simplify the Strava API with a wrapper to abstract only the tasks needed."""
 
-    def __init__(self, access_token):
+    def __init__(self, client_id, client_secret, access_token, refresh_token):
         """Create StravaAPIWrapper instance with an access token."""
         super().__init__()
+        self.client_id = client_id
+        self.client_secret = client_secret
         self.access_token = access_token
+        self.refresh_token = refresh_token
 
     def list_activities(self, page=1, perPage=30):
         """Extract a list of athlete activities from Strava API."""
