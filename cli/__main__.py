@@ -1,6 +1,7 @@
 """Command Line Tool for automating tasks to transfer data between Strava and GSheets."""
 
 # Standard Library
+import os
 import sys
 from pprint import pprint
 
@@ -8,7 +9,7 @@ from pprint import pprint
 from dotenv import load_dotenv
 
 # Our Libraries
-from core import list_activities
+from core.strava import StravaAPIWrapper
 
 load_dotenv()
 
@@ -16,7 +17,8 @@ load_dotenv()
 def main(args):
     """CLI entry point."""
     print(args)
-    pprint(list_activities(perPage=5))
+    strava = StravaAPIWrapper(os.getenv("STRAVA_ACCESS_TOKEN"))
+    pprint(strava.list_activities(perPage=5))
 
 
 if __name__ == "__main__":
