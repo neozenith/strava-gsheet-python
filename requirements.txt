@@ -1,6 +1,6 @@
 fastapi
 uvicorn[standard]
 requests
-pymongo
+pymongo[srv]
 python-dotenv
 ./strava
