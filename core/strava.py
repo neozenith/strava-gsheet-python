@@ -18,7 +18,7 @@ class StravaAPIWrapper:
         self.access_token = access_token
         self.refresh_token = refresh_token
 
-    def list_activities(self, before="", after="", page=1, per_page=30):
+    def list_activities(self, page=1, per_page=30, **kwargs):
         """Extract a list of athlete activities from Strava API."""
         api_response = []
 
@@ -26,7 +26,7 @@ class StravaAPIWrapper:
             api_instance = swagger_client.ActivitiesApi()
             api_instance.api_client.configuration.access_token = self.access_token
             api_response = api_instance.get_logged_in_athlete_activities(
-                before=before, after=after, page=page, per_page=per_page
+                page=page, per_page=per_page, **kwargs
             )
         except ApiException as e:
             print("Exception when calling ActivitiesApi->getLoggedInAthleteActivities: %s\n" % e)

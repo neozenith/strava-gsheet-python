@@ -3,4 +3,5 @@ uvicorn[standard]
 requests
 pymongo[srv]
 python-dotenv
+gspread
 ./strava
