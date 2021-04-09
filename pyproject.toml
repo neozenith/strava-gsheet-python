@@ -31,7 +31,9 @@ omit = [
   '.venv/**/*.py',
   'test/',
   'cli/__main__.py',
+  'core/*.py',
   'strava/',
+  'tasks.py'
 ]
 
 

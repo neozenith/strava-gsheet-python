@@ -14,23 +14,23 @@ swagger-codegen generate -i https://developers.strava.com/swagger/swagger.json -
 # Setup python development
 python3 -m venv .venv
 . .venv/bin/activate
-python -m pip install -r requirements.txt -r requirements-dev.txt --upgrade
+./tasks.py install
 ```
 
 ## Testing
 
 ```
-python -m pytest
+./tasks.py test
 ```
 
 ## Running the server
 
 ```
-uvicorn api.v1:app
+./tasks.py dev
 ```
 
 ## Getting logs
 
 ```
-heroku logs -a APP_NAME --tail
+./tasks.py logs --tail
 ```
