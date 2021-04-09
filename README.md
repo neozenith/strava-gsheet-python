@@ -34,3 +34,11 @@ python3 -m venv .venv
 ```
 ./tasks.py logs --tail
 ```
+
+## Getting Google Service Account Credentials
+
+[gspread: Bots Using Service Accounts](https://gspread.readthedocs.io/en/latest/oauth2.html#for-bots-using-service-account)
+
+Follow the instructions in the above link to create an API project in your google account.
+Then create a service account. Then create an API key for that service account.
+This will generate a `.json` you should save as `credentials.json` in the root of this repo.

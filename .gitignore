@@ -115,6 +115,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Sensitive Materials
+credentials.json
+
 # Spyder project settings
 .spyderproject
 .spyproject

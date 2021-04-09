@@ -20,3 +20,9 @@ class Database:
         db = self.client["workouttracker"]
         collection = db["activities"]
         return collection.insert_many(activities)
+
+    def get_activities(self, opts):
+        """Get list of Workout Activities from mongo activities collection."""
+        db = self.client["workouttracker"]
+        collection = db["activities"]
+        return collection.find(opts)
