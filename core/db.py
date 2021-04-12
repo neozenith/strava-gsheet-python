@@ -19,7 +19,15 @@ class Database:
         """Save list of Strava Activities to mongo activities collection."""
         db = self.client["workouttracker"]
         collection = db["activities"]
-        return collection.insert_many(activities)
+        output = []
+        for activity in activities:
+            name = activity["name"]
+            try:
+                output.append((name, collection.insert(activity)))
+            except Exception as err:
+                output.append((name, err))
+
+        return output
 
     def get_activities(self, opts):
         """Get list of Workout Activities from mongo activities collection."""

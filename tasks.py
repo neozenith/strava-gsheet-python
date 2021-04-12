@@ -18,12 +18,20 @@ def _cmd(command, args=[]):
     return run(command.split(" ") + args)
 
 
+def _exit_handler(status):
+    statuses = status if type(status) == list else [status]
+    bad_statuses = [s for s in statuses if s.returncode != 0]
+    if bad_statuses:
+        sys.exit(bad_statuses)
+
+
 def task_install(args):
     return _cmd("python -m pip install -r requirements.txt -r requirements-dev.txt --upgrade", args)
 
 
 def task_qa(args):
-    return [_cmd(f"{tool} core/ api/ cli/ tasks.py") for tool in ["black", "isort", "flake8"]]
+    targets = ["core/", "api/", "cli/", "tasks.py"]
+    return [_cmd(f"{tool} {' '.join(targets)}") for tool in ["black", "isort", "flake8"]]
 
 
 def task_test(args):
@@ -46,6 +54,6 @@ if __name__ == "__main__":
     tasks = _inspect_tasks("task_")
 
     if len(sys.argv) >= 2 and sys.argv[1] in tasks.keys():
-        tasks[sys.argv[1]](sys.argv[2:])
+        _exit_handler(tasks[sys.argv[1]](sys.argv[2:]))
     else:
         print(f"Must provide a task from the following: {list(tasks.keys())}")

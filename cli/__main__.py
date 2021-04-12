@@ -1,7 +1,6 @@
 """Command Line Tool for automating tasks to transfer data between Strava and GSheets."""
 
 # Standard Library
-import datetime
 import inspect
 import os
 import sys
@@ -10,11 +9,11 @@ from pprint import pprint as pp
 from typing import Dict, List
 
 # Third Party Libraries
-import gspread
 from dotenv import load_dotenv
 
 # Our Libraries
 from core.db import Database
+from core.gsheet import GoogleSheetWrapper
 from core.strava import StravaAPIWrapper
 
 load_dotenv()
@@ -33,8 +32,7 @@ def cmd_extract(args):
     strava = StravaAPIWrapper(
         os.getenv("STRAVA_CLIENT_ID"),
         os.getenv("STRAVA_CLIENT_SECRET"),
-        os.getenv("STRAVA_ACCESS_TOKEN"),
-        os.getenv("STRAVA_REFRESH_TOKEN"),
+        os.getenv("STRAVA_CREDENTIALS_FILE"),
     )
 
     valid_args = ["before", "after", "page", "per_page", "before_days_ago", "after_days_ago"]
@@ -60,6 +58,7 @@ def cmd_extract(args):
         total = total + len(activities)
         page = page + 1
         all_activities = all_activities + activities
+    pp([a["name"] for a in all_activities])
     print(f"TOTAL: {total}")
 
     db = Database(os.getenv("MONGO_CONNECTION_STRING"))
@@ -70,29 +69,14 @@ def cmd_extract(args):
 def cmd_load(args):
     """Load VirtualRide Activities from Mongo to Google Sheets."""
     db = Database(os.getenv("MONGO_CONNECTION_STRING"))
-    activities = list(db.get_activities({"type": "VirtualRide"}))
+    activities = list(db.get_activities({"type": {"$in": ["Ride", "VirtualRide"]}}))
 
-    row_count = len(activities)
-    col_names = [k for k in activities[0].keys() if k != "_id"]
-    header_names = [" ".join(k.split("_")) for k in col_names]
-    col_count = len(col_names)
-
-    gc = gspread.service_account(filename="credentials.json")
-    sh = gc.open_by_key(os.getenv("GOOGLE_SHEET_ID"))
-    worksheet = sh.worksheet(os.getenv("GOOGLE_SHEET_WORKSHEET"))
-
-    header_rangeref = f"A1:{chr(64+col_count)}1"
-    worksheet.update(header_rangeref, [header_names])
-
-    record_rangref = f"A2:{chr(64+col_count)}{row_count+2}"
-    worksheet.update(record_rangref, [[_serialize(c, row[c]) for c in col_names] for row in activities])
-
-
-def _serialize(key, value):
-    if key == "start_date_local":
-        return (value - datetime.datetime(1899, 12, 30, 0, 0, 0)).total_seconds() / 86400.0
-    else:
-        return value
+    sheet = GoogleSheetWrapper(
+        os.getenv("GOOGLE_SHEET_CREDENTIALS_FILE"),
+        os.getenv("GOOGLE_SHEET_ID"),
+        os.getenv("GOOGLE_SHEET_WORKSHEET"),
+    )
+    sheet.save_activities(activities)
 
 
 def validate_args(args, valid_args):

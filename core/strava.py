@@ -2,7 +2,13 @@
 
 Simplify the Strava API with a wrapper to abstract only the tasks needed.
 """
+
+# Standard Library
+import json
+import time
+
 # Third Party Libraries
+import requests
 import swagger_client
 from swagger_client.rest import ApiException
 
@@ -10,13 +16,33 @@ from swagger_client.rest import ApiException
 class StravaAPIWrapper:
     """Simplify the Strava API with a wrapper to abstract only the tasks needed."""
 
-    def __init__(self, client_id, client_secret, access_token, refresh_token):
+    def __init__(self, client_id, client_secret, credentials_file):
         """Create StravaAPIWrapper instance with an access token."""
         super().__init__()
         self.client_id = client_id
         self.client_secret = client_secret
-        self.access_token = access_token
-        self.refresh_token = refresh_token
+        self.credentials_file = credentials_file
+        self.credentials = self._load_credentials_file(self.credentials_file)
+        if self.credentials["expires_at"] <= time.time():
+            self._refresh_credentials()
+
+    def _load_credentials_file(self, credentials_file):
+        with open(credentials_file, "r") as credentials:
+            return json.load(credentials)
+
+    def _refresh_credentials(self):
+        response = requests.post(
+            "https://www.strava.com/api/v3/oauth/token",
+            {
+                "grant_type": "refresh_token",
+                "client_id": self.client_id,
+                "client_secret": self.client_secret,
+                "refresh_token": self.credentials["refresh_token"],
+            },
+        )
+        self.credentials = response.json()
+        with open(self.credentials_file, "w") as credentials:
+            json.dump(response.json(), credentials)
 
     def list_activities(self, page=1, per_page=30, **kwargs):
         """Extract a list of athlete activities from Strava API."""
@@ -24,7 +50,7 @@ class StravaAPIWrapper:
 
         try:
             api_instance = swagger_client.ActivitiesApi()
-            api_instance.api_client.configuration.access_token = self.access_token
+            api_instance.api_client.configuration.access_token = self.credentials["access_token"]
             api_response = api_instance.get_logged_in_athlete_activities(
                 page=page, per_page=per_page, **kwargs
             )
