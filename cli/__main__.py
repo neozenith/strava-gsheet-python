@@ -78,6 +78,10 @@ def cmd_load(args):
     )
     sheet.save_activities(activities)
 
+def cmd_sync(args):
+    cmd_extract(args)
+    cmd_load([])
+
 
 def validate_args(args, valid_args):
     """Validate args in format '--key=value'."""
