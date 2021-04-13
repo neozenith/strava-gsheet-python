@@ -78,7 +78,9 @@ def cmd_load(args):
     )
     sheet.save_activities(activities)
 
+
 def cmd_sync(args):
+    """Extract and Load data from Strava to Google Sheets in one action."""
     cmd_extract(args)
     cmd_load([])
 
