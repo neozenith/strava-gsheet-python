@@ -3,6 +3,7 @@
 import inspect
 import os
 import sys
+from pathlib import Path
 from subprocess import run
 
 
@@ -18,6 +19,12 @@ def _cmd(command, args=[]):
     return run(command.split(" ") + args)
 
 
+def _pycmd(command, args=[]):
+    # TODO: make this cross platform
+    py3 = ".venv/bin/python3"
+    return run([py3, "-m"] + command.split(" ") + args)
+
+
 def _exit_handler(status):
     statuses = status if type(status) == list else [status]
     bad_statuses = [s for s in statuses if s.returncode != 0]
@@ -25,21 +32,37 @@ def _exit_handler(status):
         sys.exit(bad_statuses)
 
 
+def task_init(args):
+    results = []
+    results.append(_cmd("python3 -m venv .venv"))
+    results.append(_pycmd("pip install --upgrade pip setuptools wheel"))
+    results = results + [
+        _pycmd(f"pip install -r {req} --upgrade", args)
+        for req in ["requirements.txt", "requirements-dev.txt"]
+        if Path(req).is_file()
+    ]
+    return results
+
+
 def task_install(args):
-    return _cmd("python -m pip install -r requirements.txt -r requirements-dev.txt --upgrade", args)
+    return [
+        _pycmd(f"pip install -r {req} --upgrade", args)
+        for req in ["requirements.txt", "requirements-dev.txt"]
+        if Path(req).is_file()
+    ]
 
 
 def task_qa(args):
     targets = ["core/", "api/", "cli/", "tasks.py"]
-    return [_cmd(f"{tool} {' '.join(targets)}") for tool in ["black", "isort", "flake8"]]
+    return [_pycmd(f"{tool} {' '.join(targets)}") for tool in ["black", "isort", "flake8"]]
 
 
 def task_test(args):
-    return _cmd("python3 -m pytest", args)
+    return _pycmd("pytest", args)
 
 
 def task_dev(args):
-    return _cmd("uvicorn api.v1:app", args)
+    return _pycmd("uvicorn api.v1:app", args)
 
 
 def task_logs(args):
