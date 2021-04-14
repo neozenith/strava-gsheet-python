@@ -7,9 +7,10 @@ from datetime import timedelta
 # Third Party Libraries
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import HTTPBasicCredentials, OAuth2PasswordRequestForm
 
-from .api.auth import authenticate_user, create_access_token, get_current_active_user
+from .api.auth import authenticate_user, basic_scheme, create_access_token, get_current_active_user
+from .core import extract, load, sync
 from .core.models.token import Token
 from .core.models.user import User
 
@@ -28,6 +29,47 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 async def greet(current_user: User = Depends(get_current_active_user)):
     """Greet logged in user."""
     return {"message": "Hello World", "user": current_user}
+
+
+@app.get("/extract")
+async def extract_activities(
+    after_days_ago: int = 1, credentials: HTTPBasicCredentials = Depends(basic_scheme)
+):
+    """Extract activities from Strava into Mongo."""
+    user = authenticate_user(credentials.username, credentials.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return len(extract(after_days_ago=after_days_ago))
+
+
+@app.get("/load")
+async def load_activities(credentials: HTTPBasicCredentials = Depends(basic_scheme)):
+    """Load activities from Mongo into GSheet."""
+    user = authenticate_user(credentials.username, credentials.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return len(load())
+
+
+@app.get("/sync")
+async def sync_activities(after_days_ago: int = 1, credentials: HTTPBasicCredentials = Depends(basic_scheme)):
+    """Extract and Load activities from Strava to GSheet."""
+    user = authenticate_user(credentials.username, credentials.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return len(sync(after_days_ago=after_days_ago)[0])
 
 
 @app.post("/token", response_model=Token)

@@ -3,13 +3,12 @@
 # Standard Library
 import os
 from datetime import datetime, timedelta
-from pprint import pprint as pp
 from typing import Optional
 
 # Third Party Libraries
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBasic, OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
@@ -20,6 +19,8 @@ from ..core.models.user import User, UserInDB
 load_dotenv()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+basic_scheme = HTTPBasic()
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 db = Database(os.getenv("MONGO_CONNECTION_STRING"))
 
@@ -42,7 +43,6 @@ def get_user(username: str):
     """Load User model from Database given a username."""
     user_data = db.get_user(username)
     if user_data:
-        pp(user_data)
         return UserInDB(**user_data)
 
 

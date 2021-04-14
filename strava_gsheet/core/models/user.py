@@ -1,10 +1,8 @@
 # Standard Library
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 # Third Party Libraries
 from pydantic import BaseModel
-
-from .token import Token
 
 
 class User(BaseModel):
@@ -16,4 +14,4 @@ class User(BaseModel):
 
 class UserInDB(User):
     hashed_password: str
-    stava_token: Optional[Dict[str,Any]] = None
+    stava_token: Optional[Dict[str, Any]] = None

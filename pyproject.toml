@@ -12,14 +12,12 @@ addopts = '''
   --black
   --flake8
   --isort
-  --mypy
   --junitxml=junit/test-results.xml
   --cov=.
   --cov-branch
   --cov-report xml:cov.xml
   --cov-report html:htmlcov
   --cov-report term
-  --cov-fail-under=80
   --ignore=strava
 '''
 
