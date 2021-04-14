@@ -7,19 +7,25 @@ import datetime
 
 # Third Party Libraries
 import gspread
+from gspread.utils import ServiceAccountCredentials
 
 
 class GoogleSheetWrapper:
     """Simplify the Google Sheet API with a wrapper to abstract only the tasks needed."""
 
-    def __init__(self, credentials_file, sheet_id, worksheet_name):
+    def __init__(self, credentials, sheet_id, worksheet_name):
         """Configure GoogleSheet client for a target worksheet."""
         super().__init__()
-        self.credentials_file = credentials_file
+        self.credentials = credentials
         self.sheet_id = sheet_id
         self.worksheet_name = worksheet_name
 
-        self.gclient = gspread.service_account(filename=self.credentials_file)
+        credentials = ServiceAccountCredentials.from_service_account_info(
+            self.credentials,
+            scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"],
+        )
+
+        self.gclient = gspread.authorize(credentials)
         self.sheet = self.gclient.open_by_key(self.sheet_id)
         self.worksheet = self.sheet.worksheet(self.worksheet_name)
 

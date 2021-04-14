@@ -56,7 +56,8 @@ async def load_activities(credentials: HTTPBasicCredentials = Depends(basic_sche
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Basic"},
         )
-    return len(load())
+    load()
+    return {"status": "success"}
 
 
 @app.get("/sync")

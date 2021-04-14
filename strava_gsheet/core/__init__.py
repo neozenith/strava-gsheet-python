@@ -32,10 +32,12 @@ def extract(**kwargs):
     activities: List[Dict[str, str]] = [{}]
     all_activities: List[Dict[str, str]] = []
     total = 0
+    db = Database(os.getenv("MONGO_CONNECTION_STRING"))
     strava = StravaAPIWrapper(
         os.getenv("STRAVA_CLIENT_ID"),
         os.getenv("STRAVA_CLIENT_SECRET"),
-        os.getenv("STRAVA_CREDENTIALS_FILE"),
+        db.get_credential("strava"),
+        db.save_credentials,
     )
 
     # Iterate all paginations until reach an empty page
@@ -48,7 +50,6 @@ def extract(**kwargs):
     pp([a["name"] for a in all_activities])
     print(f"TOTAL: {total}")
 
-    db = Database(os.getenv("MONGO_CONNECTION_STRING"))
     result = db.save_activities(all_activities)
     pp(result)
     return result
@@ -60,7 +61,7 @@ def load():
     activities = list(db.get_activities({"type": {"$in": ["Ride", "VirtualRide"]}}))
 
     sheet = GoogleSheetWrapper(
-        os.getenv("GOOGLE_SHEET_CREDENTIALS_FILE"),
+        db.get_credential("gsheet"),
         os.getenv("GOOGLE_SHEET_ID"),
         os.getenv("GOOGLE_SHEET_WORKSHEET"),
     )
