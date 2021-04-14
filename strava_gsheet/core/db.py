@@ -34,3 +34,27 @@ class Database:
         db = self.client["workouttracker"]
         collection = db["activities"]
         return collection.find(opts)
+
+    def get_user(self, username):
+        """Get User from mongo users collection."""
+        db = self.client["workouttracker"]
+        collection = db["users"]
+        return collection.find_one({"username": username})
+
+    def get_credential(self, credential_id):
+        """Get Credential from mongo credentials collection."""
+        db = self.client["workouttracker"]
+        collection = db["credentials"]
+        result = collection.find_one({"id": credential_id})
+
+        return result["value"]
+
+    def save_credentials(self, credential_id, credentials):
+        """Save Credential to mongo credentials collection."""
+        db = self.client["workouttracker"]
+        collection = db["credentials"]
+        document = collection.find_one({"id": credential_id})
+
+        document["value"] = credentials
+
+        collection.update_one({"_id": document["_id"]}, {"$set": document}, upsert=False)

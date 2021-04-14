@@ -1,7 +1,15 @@
-fastapi
+# Common
+python-dotenv
+
+# API
+fastapi[all]
 uvicorn[standard]
 requests
+python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
+
+#Third Party Integrations
 pymongo[srv]
-python-dotenv
 gspread
 ./strava

@@ -4,7 +4,6 @@ Simplify the Strava API with a wrapper to abstract only the tasks needed.
 """
 
 # Standard Library
-import json
 import time
 
 # Third Party Libraries
@@ -16,19 +15,15 @@ from swagger_client.rest import ApiException
 class StravaAPIWrapper:
     """Simplify the Strava API with a wrapper to abstract only the tasks needed."""
 
-    def __init__(self, client_id, client_secret, credentials_file):
+    def __init__(self, client_id, client_secret, credentials, save_credential_callback):
         """Create StravaAPIWrapper instance with an access token."""
         super().__init__()
         self.client_id = client_id
         self.client_secret = client_secret
-        self.credentials_file = credentials_file
-        self.credentials = self._load_credentials_file(self.credentials_file)
+        self.credentials = credentials
+        self.save_credential_callback = save_credential_callback
         if self.credentials["expires_at"] <= time.time():
             self._refresh_credentials()
-
-    def _load_credentials_file(self, credentials_file):
-        with open(credentials_file, "r") as credentials:
-            return json.load(credentials)
 
     def _refresh_credentials(self):
         response = requests.post(
@@ -41,8 +36,8 @@ class StravaAPIWrapper:
             },
         )
         self.credentials = response.json()
-        with open(self.credentials_file, "w") as credentials:
-            json.dump(response.json(), credentials)
+
+        self.save_credential_callback("strava", self.credentials)
 
     def list_activities(self, page=1, per_page=30, **kwargs):
         """Extract a list of athlete activities from Strava API."""
