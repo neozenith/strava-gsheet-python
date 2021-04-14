@@ -53,7 +53,7 @@ def task_install(args):
 
 
 def task_qa(args):
-    targets = ["core/", "api/", "cli/", "tasks.py"]
+    targets = ["strava_gsheet/", "tasks.py"]
     return [_pycmd(f"{tool} {' '.join(targets)}") for tool in ["black", "isort", "flake8"]]
 
 
@@ -62,7 +62,7 @@ def task_test(args):
 
 
 def task_dev(args):
-    return _pycmd("uvicorn api.v1:app", args)
+    return _pycmd("uvicorn strava_gsheet.server:app", args)
 
 
 def task_logs(args):

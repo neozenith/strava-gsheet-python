@@ -2,7 +2,7 @@
 from fastapi.testclient import TestClient
 
 # Our Libraries
-from api.v1 import app
+from strava_gsheet.api import app
 
 client = TestClient(app)
 

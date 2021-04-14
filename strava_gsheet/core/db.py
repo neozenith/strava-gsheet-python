@@ -34,3 +34,9 @@ class Database:
         db = self.client["workouttracker"]
         collection = db["activities"]
         return collection.find(opts)
+
+    def get_user(self, username):
+        """Get User from mongo users collection."""
+        db = self.client["workouttracker"]
+        collection = db["users"]
+        return collection.find_one({"username": username})

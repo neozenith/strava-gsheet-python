@@ -9,12 +9,10 @@ from pprint import pprint as pp
 from typing import Dict, List
 
 # Third Party Libraries
-from dotenv import load_dotenv
-
-# Our Libraries
 from core.db import Database
 from core.gsheet import GoogleSheetWrapper
 from core.strava import StravaAPIWrapper
+from dotenv import load_dotenv
 
 load_dotenv()
 
