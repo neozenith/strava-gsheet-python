@@ -22,8 +22,6 @@ class StravaAPIWrapper:
         self.client_secret = client_secret
         self.credentials = credentials
         self.save_credential_callback = save_credential_callback
-        if self.credentials["expires_at"] <= time.time():
-            self._refresh_credentials()
 
     def _refresh_credentials(self):
         response = requests.post(
@@ -41,6 +39,9 @@ class StravaAPIWrapper:
 
     def list_activities(self, page=1, per_page=30, **kwargs):
         """Extract a list of athlete activities from Strava API."""
+        if self.credentials["expires_at"] <= time.time():
+            self._refresh_credentials()
+
         api_response = []
 
         try:
