@@ -23,9 +23,9 @@ class Database:
         for activity in activities:
             name = activity["name"]
             try:
-                output.append((name, collection.insert(activity)))
+                output.append([name, str(collection.insert(activity))])
             except Exception as err:
-                output.append((name, err))
+                output.append([name, str(err)])
 
         return output
 

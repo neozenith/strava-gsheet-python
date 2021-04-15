@@ -70,7 +70,7 @@ async def sync_activities(after_days_ago: int = 1, credentials: HTTPBasicCredent
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Basic"},
         )
-    return len(sync(after_days_ago=after_days_ago)[0])
+    return sync(after_days_ago=after_days_ago)
 
 
 @app.post("/token", response_model=Token)
