@@ -1,4 +1,8 @@
-# Strava Google Sheet - Python
+# [ARCHIVED] Strava Google Sheet - Python
+
+> NOTE: This repo has been archived as the glory days of the Heroku free tier are over.
+> All future efforts are now consolidated in https://github.com/neozenith/strava-mongo-lambda
+> It is a FastAPI RESTful API on a Lambda function URL using Cognito to manage Google SSO.
 
 Connecting my Strava activities to my Google Sheets workout tracking using Python.
 
